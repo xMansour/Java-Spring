@@ -1,0 +1,2 @@
+ALTER TABLE post ADD created_at TIMESTAMP;
+ALTER TABLE post ADD modified_at TIMESTAMP;

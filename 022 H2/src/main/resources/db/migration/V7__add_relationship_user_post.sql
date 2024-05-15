@@ -1,0 +1,1 @@
+ALTER TABLE post ADD user_id BIGINT NOT NULL;
