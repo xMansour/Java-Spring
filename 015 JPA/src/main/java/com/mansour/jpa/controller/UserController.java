@@ -10,6 +10,13 @@ import com.mansour.jpa.model.User;
 import com.mansour.jpa.model.UserStatisticProjection;
 import com.mansour.jpa.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -34,12 +41,26 @@ public class UserController {
     }
 
     @GetMapping()
+    @Operation(summary = "Returns all users from the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "found users", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) })
+    })
     public List<UserDTO> getUsers() {
         return userService.getUsers();
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUser(@PathVariable Long id) {
+    @Operation(summary = "Returns a single user from the database that matches the given id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "found user", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "403", description = "UnAuthorized", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) }),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)) })
+    })
+    public UserDTO getUser(@Parameter(example = "1", name = "User Id") @PathVariable Long id) {
         try {
             return userService.getUser(id);
         } catch (ResourceNotFoundException e) {
