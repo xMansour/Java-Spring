@@ -14,7 +14,7 @@ import com.mansour.caching.shared.base.BaseService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-@CacheConfig(cacheNames = "customerCache")
+// @CacheConfig(cacheNames = "customerCache")
 public class CustomerService implements BaseService<Customer, Long> {
     private final CustomerRepository customerRepository;
 
@@ -23,17 +23,18 @@ public class CustomerService implements BaseService<Customer, Long> {
     }
 
     @Caching(cacheable = {
-            @Cacheable(cacheManager = "caffeineCacheManager"),
-            @Cacheable(cacheManager = "redisCacheManager")
+            @Cacheable(cacheNames = "customersCache", key = "#root.methodName", cacheManager = "caffeineCacheManager"),
+            @Cacheable(cacheNames = "customersCache", key = "#root.methodName", cacheManager = "redisCacheManager")
     })
+
     @Override
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
 
     @Caching(cacheable = {
-            @Cacheable(cacheManager = "caffeineCacheManager"),
-            @Cacheable(cacheManager = "redisCacheManager")
+            @Cacheable(cacheNames = "customerCache", key = "#id", cacheManager = "caffeineCacheManager"),
+            @Cacheable(cacheNames = "customerCache", key = "#id", cacheManager = "redisCacheManager")
     })
     @Override
     public Customer findById(Long id) {
@@ -41,28 +42,29 @@ public class CustomerService implements BaseService<Customer, Long> {
                 .orElseThrow(() -> new EntityNotFoundException("Customer with id:%s not found.".formatted(id)));
     }
 
-    @Caching(cacheable = {
-            @Cacheable(cacheManager = "caffeineCacheManager"),
-            @Cacheable(cacheManager = "redisCacheManager")
-    })
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "caffeineCacheManager"),
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "redisCacheManager") })
     @Override
     public Customer create(Customer obj) {
         return customerRepository.save(obj);
     }
 
-    @Caching(put = {
-            @CachePut(cacheManager = "caffeineCacheManager"),
-            @CachePut(cacheManager = "redisCacheManager")
-    })
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "caffeineCacheManager"),
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "redisCacheManager") }, put = {
+                    @CachePut(cacheNames = "customerCache", key = "#obj.id", cacheManager = "caffeineCacheManager"),
+                    @CachePut(cacheNames = "customerCache", key = "#obj.id", cacheManager = "redisCacheManager") })
     @Override
     public Customer update(Customer obj) {
         return customerRepository.save(obj);
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheManager = "caffeineCacheManager"),
-            @CacheEvict(cacheManager = "redisCacheManager")
-    })
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "caffeineCacheManager"),
+            @CacheEvict(cacheNames = "customerCache", key = "#id", cacheManager = "caffeineCacheManager"),
+            @CacheEvict(cacheNames = "customersCache", allEntries = true, cacheManager = "redisCacheManager"),
+            @CacheEvict(cacheNames = "customerCache", key = "#id", cacheManager = "redisCacheManager") })
     @Override
     public Customer delete(Long id) {
         Customer customer = customerRepository.findById(id)

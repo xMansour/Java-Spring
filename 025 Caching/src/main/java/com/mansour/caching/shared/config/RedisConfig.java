@@ -32,6 +32,7 @@ public class RedisConfig {
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory,
             RedisCacheConfiguration redisCacheConfiguration) {
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
+                .withCacheConfiguration("customersCache", redisCacheConfiguration)
                 .withCacheConfiguration("customerCache", redisCacheConfiguration).build();
     }
 
