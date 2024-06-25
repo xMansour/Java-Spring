@@ -1,4 +1,4 @@
-package com.mansour.caching.shared.config;
+package com.mansour.thymeleaf.shared.config;
 
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,18 +30,25 @@ public class OpenApiConfig {
                                                                 new Header().description("myHeader2 header")
                                                                                 .schema(new StringSchema())))
                                 .info(new Info()
-                                                .title("Customer API")
+                                                .title("Books API")
                                                 .version(appVersion)
                                                 .description(
-                                                                "This is a Customer API application.")
+                                                                "This is a Books API application.")
                                                 .termsOfService("http://swagger.io/terms/")
                                                 .license(new License().name("Apache 2.0").url("http://springdoc.org")));
         }
 
         @Bean
-        public GroupedOpenApi postOpenApi() {
-                String packagesToscan[] = { "com.mansour.lombok.employees" };
-                return GroupedOpenApi.builder().group("Employees").packagesToScan(packagesToscan)
+        public GroupedOpenApi bookOpenApi() {
+                String packagesToscan[] = { "com.mansour.thymeleaf.book" };
+                return GroupedOpenApi.builder().group("Book").packagesToScan(packagesToscan)
+                                .build();
+        }
+
+        @Bean
+        public GroupedOpenApi authorOpenApi() {
+                String packagesToscan[] = { "com.mansour.thymeleaf.author" };
+                return GroupedOpenApi.builder().group("Author").packagesToScan(packagesToscan)
                                 .build();
         }
 }
