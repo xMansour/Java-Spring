@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgis/postgis:14-3.2'
+    environment:
+      - 'POSTGRES_DB=posts'
+      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_USER=root'
+    ports:
+      - '5432:5432'
